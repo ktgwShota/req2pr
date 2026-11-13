@@ -1,0 +1,16 @@
+# ローカル設定・秘密情報は絶対にコミットしない
+.env
+.env.*
+*.local.*
+local.env
+project.env
+projects/
+!examples/
+
+# 実行時生成物
+.req2pr/
+.playwright-out/
+__pycache__/
+.venv/
+*.pyc
+.DS_Store

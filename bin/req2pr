@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# req2pr エントリポイント
+set -euo pipefail
+
+# シンボリックリンク経由でも本体の場所を解決する（macOS の readlink -f 非対応対策）
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  case "$SOURCE" in /*) ;; *) SOURCE="$DIR/$SOURCE" ;; esac
+done
+REQ2PR_HOME="$(cd -P "$(dirname "$SOURCE")/.." && pwd)"
+REQ2PR_CONFIG="${REQ2PR_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/req2pr}"
+REQ2PR_DATA="${REQ2PR_DATA:-${XDG_DATA_HOME:-$HOME/.local/share}/req2pr}"
+export REQ2PR_HOME REQ2PR_CONFIG REQ2PR_DATA
+
+. "$REQ2PR_HOME/lib/lib.sh"
+. "$REQ2PR_HOME/lib/load_config.sh"
+. "$REQ2PR_HOME/lib/commands.sh"
+
+usage() {
+  cat <<'EOF'
+req2pr — issue から TDD 実装・ブラウザ QA・Draft PR 作成までを回すハーネス
+
+使い方（対象リポジトリのディレクトリで実行）:
+  req2pr init                        このリポジトリ用のローカル設定の雛形を作る
+  req2pr config [--env-file <path>]  実際に使われる設定値と出どころを表示
+  req2pr doctor                      必要なツール・設定・LM Studio を確認
+  req2pr run <issue> [--resume] [--env-file <path>]
+                                      issue を処理する（--resume で中断した工程から再開）
+  req2pr status [<issue>]            進捗を表示
+  req2pr reset <issue> [-y]          作業を破棄して最初からやり直せる状態に戻す
+  req2pr report [--month YYYY-MM]    API 料金・トークン使用量の集計（全プロジェクト）
+  req2pr self-update                 ハーネス本体を更新（git pull）
+
+設定ファイル（公開リポジトリの外。git 管理しない）:
+  ~/.config/req2pr/local.env
+  ~/.config/req2pr/projects/<owner>__<repo>/project.env
+  ~/.config/req2pr/projects/<owner>__<repo>/project.md
+EOF
+}
+
+cmd="${1:-help}"
+[ $# -gt 0 ] && shift
+case "$cmd" in
+  init)        cmd_init "$@" ;;
+  config)      cmd_config "$@" ;;
+  doctor)      cmd_doctor "$@" ;;
+  run)         exec bash "$REQ2PR_HOME/lib/run.sh" "$@" ;;
+  status)      cmd_status "$@" ;;
+  reset)       cmd_reset "$@" ;;
+  report)
+    month=""
+    case "${1:-}" in
+      --month) month="${2:-}" ;;
+      --month=*) month="${1#*=}" ;;
+      "") ;;
+      *) die "使い方: req2pr report [--month YYYY-MM]" ;;
+    esac
+    hx usage report --month "$month" ;;
+  self-update) git -C "$REQ2PR_HOME" pull --ff-only ;;
+  help|-h|--help) usage ;;
+  *) usage; exit 1 ;;
+esac

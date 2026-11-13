@@ -1,0 +1,15 @@
+# QA項目。① planner が作成し、人が承認する。⑤ qa-runner はこの手順どおりにブラウザを操作する。
+issue: 0
+base_url: http://localhost:0000   # 実行時は APP_URL を使う
+cases:
+  - id: QA-01                     # QA-01 から連番
+    ac: AC-1                      # 対応する完了要件
+    title: <確認内容を一言で>
+    preconditions:                # 前提条件（ログイン状態・データなど）
+      - <前提>
+    steps:                        # URL・画面上のボタン名・文言の単位で書く
+      - <URL> を開く
+      - 「<ボタン名>」をクリック
+    expected: <画面で観察できる事実だけを書く>
+    screenshot_at: <スクショを撮るタイミング>
+    visual_check: false           # true なら qa-reviewer（有効時）が見た目も確認する

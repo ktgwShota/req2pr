@@ -1,0 +1,18 @@
+# プロジェクト知識（サンプル）
+
+> req2pr init で ~/.config/req2pr/projects/<owner>__<repo>/project.md にコピーされる。
+> **以下は架空の例です。すべてプロジェクトの内容に書き換えてください**（サンプルのままだと req2pr run が止まります）。
+> 全エージェントが毎回読むので、短く・具体的に。推測できない情報だけを書く。
+
+## 構成
+- フロントエンド: React + Vite（src/）
+- バックエンド: FastAPI（api/）、DB は SQLite
+- テスト: Vitest（*.test.ts）、E2E は Playwright（e2e/）
+
+## 規約（理由つき）
+- API の入力検証は zod スキーマで行う（エラー形式を統一するため）
+- 日付は UTC で保存し、表示時にだけローカル時刻へ変換する（タイムゾーンのバグが多かったため）
+
+## ハマりどころ
+- `npm run dev` の初回起動はビルドに 30 秒ほどかかる
+- テスト用ログインユーザー: シードスクリプト `npm run seed` で作成される test@example.com / password

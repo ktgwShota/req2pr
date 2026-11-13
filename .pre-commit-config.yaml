@@ -1,0 +1,13 @@
+# pip install pre-commit && pre-commit install
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+  - repo: local
+    hooks:
+      - id: no-project-config
+        name: ローカル設定ファイルのコミットを禁止
+        entry: bash -c 'for f in "$@"; do case "$f" in examples/*) ;; *project.env|*local.env|*.env|projects/*) echo "コミット禁止: $f"; exit 1;; esac; done' --
+        language: system
+        pass_filenames: true

@@ -1,0 +1,11 @@
+{
+  "_note": "単価は USD / 100万トークン。このファイルをコピーして ~/.config/req2pr/pricing.json に置き、Anthropic 公式の料金表を見て記入する（ローカル側が優先される）。0 のままなら OpenCode が計算した料金を記録する。",
+  "source": "https://www.anthropic.com/pricing",
+  "updated": "",
+  "models": {
+    "anthropic/claude-opus-*":   { "input": 0, "output": 0, "cache_read": 0, "cache_write": 0 },
+    "anthropic/claude-sonnet-*": { "input": 0, "output": 0, "cache_read": 0, "cache_write": 0 },
+    "anthropic/claude-haiku-*":  { "input": 0, "output": 0, "cache_read": 0, "cache_write": 0 },
+    "lmstudio/*":                { "input": 0, "output": 0, "cache_read": 0, "cache_write": 0 }
+  }
+}
